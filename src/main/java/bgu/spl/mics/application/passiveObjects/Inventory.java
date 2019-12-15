@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,35 +12,48 @@ import java.util.List;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class Inventory {
+	private static Inventory inventory;
 	private List<String> gadgets;
-	/**
-     * Retrieves the single instance of this class.
-     */
-	public static Inventory getInstance() {
-		//TODO: Implement this
-		return null;
+
+	private Inventory() {
+		gadgets = new ArrayList<String>();
 	}
 
 	/**
-     * Initializes the inventory. This method adds all the items given to the gadget
-     * inventory.
-     * <p>
-     * @param inventory 	Data structure containing all data necessary for initialization
-     * 						of the inventory.
-     */
-	public void load (String[] inventory) {
-		//TODO: Implement this
+	 * Retrieves the single instance of this class.
+	 */
+	public static Inventory getInstance() {
+		if (inventory == null)
+			inventory = new Inventory();
+		return inventory;
 	}
-	
+
 	/**
-     * acquires a gadget and returns 'true' if it exists.
-     * <p>
-     * @param gadget 		Name of the gadget to check if available
-     * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
-     */
-	public boolean getItem(String gadget){
-		//TODO: Implement this
-		return true;
+	 * Initializes the inventory. This method adds all the items given to the gadget
+	 * inventory.
+	 * <p>
+	 *
+	 * @param inventory Data structure containing all data necessary for initialization
+	 *                  of the inventory.
+	 */
+	public void load(String[] inventory) {
+		for (String gadget : inventory)
+			gadgets.add(gadget);
+	}
+
+	/**
+	 * acquires a gadget and returns 'true' if it exists.
+	 * <p>
+	 *
+	 * @param gadget Name of the gadget to check if available
+	 * @return ‘false’ if the gadget is missing, and ‘true’ otherwise
+	 */
+	public boolean getItem(String gadget) {
+		if (gadgets.contains(gadget)) {
+			gadgets.remove(gadget);
+			return true;
+		}
+		return false;
 	}
 
 	/**
