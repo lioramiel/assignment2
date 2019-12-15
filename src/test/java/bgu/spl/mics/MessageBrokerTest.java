@@ -22,25 +22,6 @@ public class MessageBrokerTest {
     }
 
     /**
-     * Test method for {@link bgu.spl.mics.MessageBroker#getInstance()}.
-     */
-    @Test
-    public void testGetInstance() {
-        MessageBroker newMessageBroker = MessageBrokerImpl.getInstance();
-        Subscriber subscriber = new M();
-        Event<String> event = new ExampleEvent("agent001");
-        assertTrue(messageBroker.sendEvent(event) == null);
-        messageBroker.register(subscriber);
-        messageBroker.subscribeEvent(ExampleEvent.class, subscriber);
-        try {
-            messageBroker.awaitMessage(subscriber);
-        } catch (InterruptedException e) {
-            fail("Unexpected exception: " + e.getMessage());
-        }
-        assertFalse(newMessageBroker.sendEvent(event) == null);
-    }
-
-    /**
      * Test method for {@link bgu.spl.mics.MessageBroker#subscribeEvent(Class<? extends Event<T>> type, Subscriber s)}.
      */
     @Test public void testSubscribeEvent() {
@@ -154,7 +135,7 @@ public class MessageBrokerTest {
     }
 
     /**
-     * Test method for {@link bgu.spl.mics.MessageBroker#register(Subscriber s)}.
+     * Test method for {@link bgu.spl.mics.MessageBroker#unregister(Subscriber s)}.
      */
     @Test public void testUnregister() {
         Subscriber subscriber = new M();
