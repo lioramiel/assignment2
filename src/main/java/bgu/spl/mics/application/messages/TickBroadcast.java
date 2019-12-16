@@ -4,5 +4,17 @@ import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.Message;
 
 public class TickBroadcast implements Broadcast {
-    public TickBroadcast() {}
+    int time;
+
+    public TickBroadcast(int time) {
+        this.time = time;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 }

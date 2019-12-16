@@ -9,7 +9,6 @@ import bgu.spl.mics.Subscriber;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class M extends Subscriber {
-
 	public M() {
 		super("Change_This_Name");
 		// TODO Implement this
@@ -17,8 +16,7 @@ public class M extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
-		
+		Thread t = new Thread(this);
+		t.start();
 	}
-
 }

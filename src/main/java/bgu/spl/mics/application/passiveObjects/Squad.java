@@ -54,8 +54,11 @@ public class Squad {
      * @param time milliseconds to sleep
      */
     public void sendAgents(List<String> serials, int time) {
-//		sleep(time);
-        //TODO: write the sleeping time
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         releaseAgents(serials);
     }
 

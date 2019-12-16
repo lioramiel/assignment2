@@ -10,11 +10,11 @@ public class Agent {
 
 	private String name;
 	private String serialNumber;
-	private boolean avalible;
+	private boolean available;
 
 
 	public Agent() {
-		avalible = true;
+		available = true;
 	}
 
 	/**
@@ -58,20 +58,20 @@ public class Agent {
 	 * @return if the agent is available.
 	 */
 	public boolean isAvailable() {
-		return avalible;
+		return available;
 	}
 
 	/**
 	 * Acquires an agent.
 	 */
 	public void acquire() {
-		avalible = false;
+		available = false;
 	}
 
 	/**
 	 * Releases an agent.
 	 */
 	public void release() {
-		avalible = true;
+		available = true;
 	}
 }

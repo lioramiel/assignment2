@@ -18,6 +18,7 @@ public class Intelligence extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		Thread t = new Thread(this);
+		t.start();
 	}
 }
