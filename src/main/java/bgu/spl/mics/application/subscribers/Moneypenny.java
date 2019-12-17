@@ -2,6 +2,7 @@ package bgu.spl.mics.application.subscribers;
 
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.messages.AgentsAvailableEvent;
+import bgu.spl.mics.application.messages.SendAgentsEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Squad;
 
@@ -16,8 +17,8 @@ public class Moneypenny extends Subscriber {
 	private Squad squad;
 	private int time;
 
-	public Moneypenny(String name) {
-		super(name);
+	public Moneypenny() {
+		super("Moneypenny");
 		squad = Squad.getInstance();
 	}
 
@@ -26,6 +27,11 @@ public class Moneypenny extends Subscriber {
 		subscribeEvent(AgentsAvailableEvent.class, (c) -> {
 			Boolean result = squad.getAgents(c.getSerials());
 			complete(c, result);
+		});
+
+		subscribeEvent(SendAgentsEvent.class, (c) -> {
+			squad.sendAgents(c.getSerials(), c.getTime());
+			complete(c, squad.getAgentsNames(c.getSerials()));
 		});
 
 		subscribeBroadcast(TickBroadcast.class, (c) -> {

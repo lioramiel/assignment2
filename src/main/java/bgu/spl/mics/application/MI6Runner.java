@@ -1,12 +1,12 @@
 package bgu.spl.mics.application;
 
-import bgu.spl.mics.application.JsonObjects.input;
+import bgu.spl.mics.application.JsonObjects.InputJson;
+import bgu.spl.mics.application.JsonObjects.test;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -15,13 +15,25 @@ import java.io.IOException;
 public class MI6Runner {
     public static void main(String[] args) {
         Gson gson = new Gson();
+        InputJson data = null;
         try (JsonReader reader = new JsonReader(new FileReader("input.json"))) {
-            input data = gson.fromJson(reader, input.class);
+            data = gson.fromJson(reader, InputJson.class);
             System.out.println(data);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        test t = new test();
+        try {
+            Writer writer = new FileWriter("test.json");
+            Gson gson2 = new GsonBuilder().create();
+            gson2.toJson(t, writer);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -2,7 +2,7 @@ package bgu.spl.mics.application.JsonObjects;
 
 import java.util.List;
 
-public class inventory {
+public class InventoryJson {
     private List<String> gadgets;
 
     public List<String> getGadgets() {

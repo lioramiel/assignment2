@@ -3,10 +3,10 @@ package bgu.spl.mics.application.JsonObjects;
 
 import java.util.List;
 
-public class services {
+public class ServicesJson {
     private int M;
     private int Moneypenny;
-    private List<bgu.spl.mics.application.JsonObjects.intelligence> intelligence;
+    private List<IntelligenceJson> intelligence;
     private int time;
 
     public int getM() {
@@ -25,11 +25,11 @@ public class services {
         Moneypenny = moneypenny;
     }
 
-    public List<bgu.spl.mics.application.JsonObjects.intelligence> getIntelligence() {
+    public List<IntelligenceJson> getIntelligence() {
         return intelligence;
     }
 
-    public void setIntelligence(List<bgu.spl.mics.application.JsonObjects.intelligence> intelligence) {
+    public void setIntelligence(List<IntelligenceJson> intelligence) {
         this.intelligence = intelligence;
     }
 

@@ -18,8 +18,8 @@ public class Q extends Subscriber {
 	Inventory inventory;
 	private int time;
 
-	public Q(String name) {
-		super(name);
+	public Q() {
+		super("Q");
 		inventory = Inventory.getInstance();
 	}
 	

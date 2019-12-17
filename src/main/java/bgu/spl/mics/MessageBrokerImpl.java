@@ -1,9 +1,6 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.messages.AgentsAvailableEvent;
-import bgu.spl.mics.application.messages.GadgetAvailableEvent;
-import bgu.spl.mics.application.messages.MissionReceivedEvent;
-import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.messages.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +30,7 @@ public class MessageBrokerImpl implements MessageBroker {
         eventsSubscribers.put(AgentsAvailableEvent.class, new ConcurrentLinkedQueue<>());
         eventsSubscribers.put(GadgetAvailableEvent.class, new ConcurrentLinkedQueue<>());
         eventsSubscribers.put(MissionReceivedEvent.class, new ConcurrentLinkedQueue<>());
+        eventsSubscribers.put(SendAgentsEvent.class, new ConcurrentLinkedQueue<>());
         broadcastsSubscribers.put(TickBroadcast.class, new LinkedList<>());
     }
 
@@ -67,7 +65,6 @@ public class MessageBrokerImpl implements MessageBroker {
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        //TODO: check if agent available
         Queue<Subscriber> eTypeSubscribersQueue = eventsSubscribers.get(e.getClass());
         if (eTypeSubscribersQueue.isEmpty())
             return null;

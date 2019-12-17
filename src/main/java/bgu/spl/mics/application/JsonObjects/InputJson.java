@@ -4,9 +4,9 @@ import bgu.spl.mics.application.passiveObjects.Agent;
 
 import java.util.List;
 
-public class input {
+public class InputJson {
     private List<String> inventory;
-    private services services;
+    private ServicesJson services;
     private List<Agent> squad;
 
     @Override

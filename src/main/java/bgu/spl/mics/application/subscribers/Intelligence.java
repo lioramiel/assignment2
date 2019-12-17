@@ -13,8 +13,8 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 public class Intelligence extends Subscriber {
 	private int time;
 
-	public Intelligence(String name) {
-		super(name);
+	public Intelligence() {
+		super("Intelligence");
 	}
 
 	@Override

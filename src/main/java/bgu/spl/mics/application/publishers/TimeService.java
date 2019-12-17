@@ -22,14 +22,12 @@ public class TimeService extends Publisher {
     private int duration;
     private int time;
     private Timer timer;
-    private MessageBroker messageBroker;
 
 
     public TimeService(int duration, String name) {
         super(name);
         this.duration = duration;
         this.time = 0;
-        this.messageBroker = MessageBrokerImpl.getInstance();
     }
 
     @Override
@@ -45,7 +43,7 @@ public class TimeService extends Publisher {
             @Override
             public void run() {
                 Broadcast tickBroadcast = new TickBroadcast(time);
-                messageBroker.sendBroadcast(tickBroadcast);
+                getSimplePublisher().sendBroadcast(tickBroadcast);
                 time = time + 1;
                 if (duration < time * 100)
                     cancel();

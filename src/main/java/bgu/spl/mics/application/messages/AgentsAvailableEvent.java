@@ -16,4 +16,6 @@ public class AgentsAvailableEvent implements Event<Boolean> {
     public List<String> getSerials() {
         return serials;
     }
+
+
 }

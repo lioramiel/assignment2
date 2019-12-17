@@ -22,7 +22,7 @@ public class MessageBrokerTest {
     }
 
     /**
-     * Test method for {@link bgu.spl.mics.MessageBroker#subscribeEvent(Class<? extends Event<T>> type, Subscriber s)}.
+     * Test method for {@link bgu.spl.mics.MessageBrokerImpl#subscribeEvent(Class, Subscriber)}.
      */
     @Test public void testSubscribeEvent() {
         Subscriber subscriber = new M();
@@ -39,7 +39,7 @@ public class MessageBrokerTest {
     }
 
     /**
-     * Test method for {@link bgu.spl.mics.MessageBroker#subscribeBroadcast(Class<? extends Event<T>> type, Subscriber s)}.
+     * Test method for {@link bgu.spl.mics.MessageBroker#subscribeBroadcast(Class, Subscriber)}.
      */
     @Test public void testSubscribeBroadcast() {
         Subscriber subscriber = new M();
@@ -58,7 +58,7 @@ public class MessageBrokerTest {
     }
 
     /**
-     * Test method for {@link bgu.spl.mics.MessageBroker#complete(Event<T> e, T result)}.
+     * Test method for {@link bgu.spl.mics.MessageBroker#complete(Event, Object)}.
      */
     @Test public void testComplete() {
         Subscriber subscriber = new M();
@@ -76,7 +76,7 @@ public class MessageBrokerTest {
     }
 
     /**
-     * Test method for {@link bgu.spl.mics.MessageBroker#sendEvent(Broadcast b)}.
+     * Test method for {@link bgu.spl.mics.MessageBroker#sendEvent(Event)}.
      */
     @Test public void testSendEvent() {
         Subscriber subscriber = new M();
