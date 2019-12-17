@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public abstract class Subscriber extends RunnableSubPub {
     private boolean terminated = false;
+    private MessageBroker messageBroker;
     private Map<Class, Callback> messageSubscribes;
 
     /**
@@ -28,6 +29,7 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     public Subscriber(String name) {
         super(name);
+        this.messageBroker = MessageBrokerImpl.getInstance();
         messageSubscribes = new HashMap<>();
     }
 
@@ -53,6 +55,7 @@ public abstract class Subscriber extends RunnableSubPub {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
+        messageBroker.subscribeEvent(type, this);
         this.messageSubscribes.put(type, callback);
     }
 
@@ -77,6 +80,7 @@ public abstract class Subscriber extends RunnableSubPub {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
+        messageBroker.subscribeBroadcast(type, this);
         this.messageSubscribes.put(type, callback);
     }
 
@@ -91,7 +95,7 @@ public abstract class Subscriber extends RunnableSubPub {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        //TODO: implement this.
+        this.messageBroker.complete(e, result);
     }
 
     /**
@@ -108,17 +112,17 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     @Override
     public final synchronized void run() {
+        messageBroker.register(this);
         initialize();
         while (!terminated) {
-            for(Class type : messageSubscribes.keySet())
-                if(messageSubscribes.get(type) != null)
-                    messageSubscribes.get(type).call(type);
             try {
-                this.wait();
+                Message message = messageBroker.awaitMessage(this);
+                messageSubscribes.get(message.getClass()).call(message);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        messageBroker.unregister(this);
     }
 
 }

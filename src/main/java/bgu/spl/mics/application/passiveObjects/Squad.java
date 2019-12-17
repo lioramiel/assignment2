@@ -10,7 +10,9 @@ import java.util.*;
  */
 public class Squad {
 
-    private static Squad squad;
+    private static class SingeltonHolder {
+        private static Squad instance = new Squad();
+    }
     private Map<String, Agent> agents;
 
     private Squad() {
@@ -21,9 +23,7 @@ public class Squad {
      * Retrieves the single instance of this class.
      */
     public static Squad getInstance() {
-        if (squad == null)
-            squad = new Squad();
-        return squad;
+        return SingeltonHolder.instance;
     }
 
     /**
@@ -34,18 +34,17 @@ public class Squad {
      *               of the squad.
      */
     public void load(Agent[] agents) {
-        for (Agent a : agents) {
+        for (Agent a : agents)
             this.agents.put(a.getSerialNumber(), a);
-        }
     }
 
     /**
      * Releases agents.
      */
-    public void releaseAgents(List<String> serials) {
-        for (String sn : serials) {
-            agents.remove(agents.get(sn));
-        }
+    public synchronized void releaseAgents(List<String> serials) {
+        for (String sn : serials)
+            agents.get(sn).release();
+        this.notifyAll();
     }
 
     /**
@@ -53,9 +52,9 @@ public class Squad {
      *
      * @param time milliseconds to sleep
      */
-    public void sendAgents(List<String> serials, int time) {
+    public synchronized void sendAgents(List<String> serials, int time) {
         try {
-            Thread.sleep(time);
+            Thread.sleep(time * 100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -68,17 +67,20 @@ public class Squad {
      * @param serials the serial numbers of the agents
      * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
      */
-    public boolean getAgents(List<String> serials) {
+    public synchronized boolean getAgents(List<String> serials) {
         Agent temp;
         for (String sn : serials) {
             if (!agents.containsKey(sn))
                 return false;
             temp = agents.get(sn);
-            if (temp.isAvailable())
-                temp.acquire();
-//            else
-//                wait();
-            //TODO: write waiting
+            while (!temp.isAvailable()) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            temp.acquire();
         }
         return true;
     }

@@ -1,8 +1,17 @@
 package bgu.spl.mics.application.messages;
 
+import bgu.spl.mics.Callback;
 import bgu.spl.mics.Event;
-import bgu.spl.mics.Message;
 
-public class GadgetAvailableEvent implements Event<String> {
-    public GadgetAvailableEvent() {}
+public class GadgetAvailableEvent implements Event<Boolean> {
+    private String gadget;
+
+    public GadgetAvailableEvent(String gadget) {
+        this.gadget = gadget;
+    }
+
+    public String getGadget() {
+        return gadget;
+    }
+
 }

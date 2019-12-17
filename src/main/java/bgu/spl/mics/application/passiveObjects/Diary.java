@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import bgu.spl.mics.MessageBroker;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,9 @@ import java.util.List;
  */
 public class Diary {
 
-	private static Diary diary;
+	private static class SingletonHolder {
+        private static Diary instance = new Diary();
+    }
 	private List<Report> reports;
 	private int total;
 
@@ -26,9 +30,7 @@ public class Diary {
 	 * Retrieves the single instance of this class.
 	 */
 	public static Diary getInstance() {
-		if (diary == null)
-			diary = new Diary();
-		return diary;
+		return SingletonHolder.instance;
 	}
 
 	public List<Report> getReports() {
