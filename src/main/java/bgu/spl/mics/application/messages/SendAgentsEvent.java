@@ -7,7 +7,6 @@ import java.util.List;
 public class SendAgentsEvent implements Event<List<String>> {
     private List<String> serials;
     private int duration;
-    private String subscriberSerialNumber;
 
     public SendAgentsEvent(List<String> serials, int time) {
         this.serials = serials;
@@ -20,13 +19,5 @@ public class SendAgentsEvent implements Event<List<String>> {
 
     public int getDuration() {
         return duration;
-    }
-
-    public String getSubscriberSerialNumber() {
-        return subscriberSerialNumber;
-    }
-
-    public void setSubscriberSerialNumber(String subscriberSerialNumber) {
-        this.subscriberSerialNumber = subscriberSerialNumber;
     }
 }

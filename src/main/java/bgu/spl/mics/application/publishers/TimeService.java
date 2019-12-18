@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.publishers;
 
 import bgu.spl.mics.Broadcast;
-import bgu.spl.mics.MessageBroker;
-import bgu.spl.mics.MessageBrokerImpl;
 import bgu.spl.mics.Publisher;
 import bgu.spl.mics.application.messages.TickBroadcast;
 
@@ -32,8 +30,7 @@ public class TimeService extends Publisher {
 
     @Override
     protected void initialize() {
-        Thread t = new Thread(this);
-        t.start();
+
     }
 
     @Override
@@ -44,15 +41,15 @@ public class TimeService extends Publisher {
             public void run() {
                 Broadcast tickBroadcast = new TickBroadcast(time);
                 getSimplePublisher().sendBroadcast(tickBroadcast);
+                System.out.println(time * 100);
                 time = time + 1;
-                if (duration < time * 100)
-                    cancel();
+                if (duration * 100 < time * 100)
+                    timer.cancel();
             }
         }, 0, 100);
     }
 
-    protected void stopTimer() {
-        timer.cancel();
+    public int getTime() {
+        return time;
     }
-
 }

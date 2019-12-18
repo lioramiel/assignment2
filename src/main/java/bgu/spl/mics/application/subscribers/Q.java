@@ -17,21 +17,21 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 public class Q extends Subscriber {
 	private Inventory inventory;
 	private int time;
-	private String serialNumber;
+	private int serialNumber;
 
 	public Q() {
 		super("Q");
 		this.inventory = Inventory.getInstance();
-		this.serialNumber = "023";
+		this.serialNumber = 0;
 	}
 
-	public Q(String name, String serialNumber) {
+	public Q(String name, int serialNumber) {
 		super(name);
 		this.inventory = Inventory.getInstance();
 		this.serialNumber = serialNumber;
 	}
 
-	public String getSerialNumber() {
+	public int getSerialNumber() {
 		return serialNumber;
 	}
 
@@ -39,7 +39,10 @@ public class Q extends Subscriber {
 	protected void initialize() {
 		subscribeEvent(GadgetAvailableEvent.class, (c) -> {
 			Boolean result = inventory.getItem(c.getGadget());
-			complete(c, result);
+			if(result)
+				complete(c, Integer.valueOf(time));
+			else
+				complete(c, -1);
 		});
 
 		subscribeBroadcast(TickBroadcast.class, (c) -> {

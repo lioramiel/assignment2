@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class Report {
 
-    private String MissionName;
-    private int M;
-    private int Moneypenny;
+    private String missionName;
+    private int m;
+    private int moneypenny;
     private List<String> agentsSerialNumbers;
     private List<String> agentsNames;
     private String gadgetName;
@@ -21,51 +21,64 @@ public class Report {
     private int QTime;
     private int timeCreated;
 
-    public Report() {
-        agentsSerialNumbers = new ArrayList<>();
-        agentsNames = new ArrayList<>();
+//    public Report() {
+//        agentsSerialNumbers = new ArrayList<>();
+//        agentsNames = new ArrayList<>();
+//    }
+
+
+    public Report(String missionName, int m, int moneypenny, List<String> agentsSerialNumbers, List<String> agentsNames, String gadgetName, int timeIssued, int QTime, int timeCreated) {
+        this.missionName = missionName;
+        this.m = m;
+        this.moneypenny = moneypenny;
+        this.agentsSerialNumbers = agentsSerialNumbers;
+        this.agentsNames = agentsNames;
+        this.gadgetName = gadgetName;
+        this.timeIssued = timeIssued;
+        this.QTime = QTime;
+        this.timeCreated = timeCreated;
     }
 
     /**
      * Retrieves the mission name.
      */
     public String getMissionName() {
-        return MissionName;
+        return missionName;
     }
 
     /**
      * Sets the mission name.
      */
     public void setMissionName(String missionName) {
-        MissionName = missionName;
+        missionName = missionName;
     }
 
     /**
      * Retrieves the M's id.
      */
     public int getM() {
-        return M;
+        return m;
     }
 
     /**
      * Sets the M's id.
      */
     public void setM(int m) {
-        M = m;
+        m = m;
     }
 
     /**
      * Retrieves the Moneypenny's id.
      */
     public int getMoneypenny() {
-        return Moneypenny;
+        return moneypenny;
     }
 
     /**
      * Sets the Moneypenny's id.
      */
     public void setMoneypenny(int moneypenny) {
-        Moneypenny = moneypenny;
+        moneypenny = moneypenny;
     }
 
     /**

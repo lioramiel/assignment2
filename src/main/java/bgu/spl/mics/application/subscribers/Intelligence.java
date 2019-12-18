@@ -1,13 +1,9 @@
 package bgu.spl.mics.application.subscribers;
 
 import bgu.spl.mics.Subscriber;
-import bgu.spl.mics.application.JsonObjects.InputJson;
 import bgu.spl.mics.application.messages.MissionReceivedEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
-import jdk.vm.ci.services.Services;
-import org.graalvm.compiler.asm.amd64.AMD64Assembler;
-
 import java.util.List;
 
 /**
@@ -19,15 +15,15 @@ import java.util.List;
  */
 public class Intelligence extends Subscriber {
 	private int time;
-	private String serialNumber;
+	private int serialNumber;
 	private List<MissionInfo> missions;
 
 	public Intelligence() {
 		super("Intelligence");
-		this.serialNumber = "022";
+		this.serialNumber = 0;
 	}
 
-	public Intelligence(String name, String serialNumber, List<MissionInfo> missions) {
+	public Intelligence(String name, int serialNumber, List<MissionInfo> missions) {
 		super(name);
 		this.serialNumber = serialNumber;
 		this.missions = missions;
@@ -51,7 +47,7 @@ public class Intelligence extends Subscriber {
 		}
 	}
 
-	public String getSerialNumber() {
+	public int getSerialNumber() {
 		return serialNumber;
 	}
 

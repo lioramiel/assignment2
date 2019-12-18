@@ -2,6 +2,7 @@ package bgu.spl.mics.application.subscribers;
 
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.messages.AgentsAvailableEvent;
+import bgu.spl.mics.application.messages.ReleaseAgentsEvent;
 import bgu.spl.mics.application.messages.SendAgentsEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.Squad;
@@ -16,36 +17,42 @@ import bgu.spl.mics.application.passiveObjects.Squad;
 public class Moneypenny extends Subscriber {
 	private Squad squad;
 	private int time;
-	private String serialNumber;
+	private Integer serialNumber;
 
 	public Moneypenny() {
 		super("Moneypenny");
 		this.squad = Squad.getInstance();
-		this.serialNumber = "024";
+		this.serialNumber = 0;
 	}
 
-	public Moneypenny(String name, String serialNumber) {
+	public Moneypenny(String name, Integer serialNumber) {
 		super(name);
 		this.squad = Squad.getInstance();
 		this.serialNumber = serialNumber;
 	}
 
-	public String getSerialNumber() {
+	public Integer getSerialNumber() {
 		return serialNumber;
 	}
 
 	@Override
 	protected void initialize() {
 		subscribeEvent(AgentsAvailableEvent.class, (c) -> {
-			c.setSubscriberSerialNumber(serialNumber);
-			Boolean result = squad.getAgents(c.getSerials());
-			complete(c, result);
+			Boolean agentsAvailable = squad.getAgents(c.getSerials());
+			if(agentsAvailable)
+				complete(c, getSerialNumber());
+			else
+				complete(c, -1);
 		});
 
 		subscribeEvent(SendAgentsEvent.class, (c) -> {
-			c.setSubscriberSerialNumber(serialNumber);
 			squad.sendAgents(c.getSerials(), c.getDuration());
 			complete(c, squad.getAgentsNames(c.getSerials()));
+		});
+
+		subscribeEvent(ReleaseAgentsEvent.class, (c) -> {
+			squad.releaseAgents(c.getSerials());
+			complete(c, 0);
 		});
 
 		subscribeBroadcast(TickBroadcast.class, (c) -> {

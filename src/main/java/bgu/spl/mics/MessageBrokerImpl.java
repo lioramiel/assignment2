@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MessageBrokerImpl implements MessageBroker {
 
     private static class SingletonHolder {
-        private static MessageBroker instance = new MessageBrokerImpl();
+        private static MessageBrokerImpl instance = new MessageBrokerImpl();
     }
 
     private Map<Subscriber, Queue<Message>> subscribersQueuesMap;
@@ -30,6 +30,7 @@ public class MessageBrokerImpl implements MessageBroker {
         eventsSubscribers.put(AgentsAvailableEvent.class, new ConcurrentLinkedQueue<>());
         eventsSubscribers.put(GadgetAvailableEvent.class, new ConcurrentLinkedQueue<>());
         eventsSubscribers.put(MissionReceivedEvent.class, new ConcurrentLinkedQueue<>());
+        eventsSubscribers.put(ReleaseAgentsEvent.class, new ConcurrentLinkedQueue<>());
         eventsSubscribers.put(SendAgentsEvent.class, new ConcurrentLinkedQueue<>());
         broadcastsSubscribers.put(TickBroadcast.class, new LinkedList<>());
     }
@@ -37,7 +38,7 @@ public class MessageBrokerImpl implements MessageBroker {
     /**
      * Retrieves the single instance of this class.
      */
-    public static MessageBroker getInstance() {
+    public static MessageBrokerImpl getInstance() {
         return SingletonHolder.instance;
     }
 

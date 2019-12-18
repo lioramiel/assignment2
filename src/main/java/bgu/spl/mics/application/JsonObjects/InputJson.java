@@ -5,9 +5,33 @@ import bgu.spl.mics.application.passiveObjects.Agent;
 import java.util.List;
 
 public class InputJson {
-    private List<String> inventory;
+    private String[] inventory;
     private ServicesJson services;
-    private List<Agent> squad;
+    private Agent[] squad;
+
+    public String[] getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(String[] inventory) {
+        this.inventory = inventory;
+    }
+
+    public ServicesJson getServices() {
+        return services;
+    }
+
+    public void setServices(ServicesJson services) {
+        this.services = services;
+    }
+
+    public Agent[] getSquad() {
+        return squad;
+    }
+
+    public void setSquad(Agent[] squad) {
+        this.squad = squad;
+    }
 
     @Override
     public String toString() {
