@@ -7,7 +7,8 @@ import bgu.spl.mics.application.passiveObjects.Agent;
 import java.util.List;
 
 public class AgentsAvailableEvent implements Event<Boolean> {
-    List<String> serials;
+    private List<String> serials;
+    private String subscriberSerialNumber;
 
     public AgentsAvailableEvent(List<String> serials) {
         this.serials = serials;
@@ -17,5 +18,11 @@ public class AgentsAvailableEvent implements Event<Boolean> {
         return serials;
     }
 
+    public String getSubscriberSerialNumber() {
+        return subscriberSerialNumber;
+    }
 
+    public void setSubscriberSerialNumber(String subscriberSerialNumber) {
+        this.subscriberSerialNumber = subscriberSerialNumber;
+    }
 }

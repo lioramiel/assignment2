@@ -24,16 +24,16 @@ public class MI6Runner {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        test t = new test();
-        try {
-            Writer writer = new FileWriter("test.json");
-            Gson gson2 = new GsonBuilder().create();
-            gson2.toJson(t, writer);
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        //TODO: read the JSON and create all relevant objects
+//        test t = new test();
+//        try {
+//            Writer writer = new FileWriter("test.json");
+//            Gson gson2 = new GsonBuilder().create();
+//            gson2.toJson(t, writer);
+//            writer.flush();
+//            writer.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

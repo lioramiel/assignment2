@@ -13,22 +13,30 @@ import bgu.spl.mics.application.passiveObjects.MissionInfo;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class M extends Subscriber {
-	Diary diary;
+	private Diary diary;
 	private int time;
+	private String serialNumber;
 
 	public M() {
 		super("M");
-		diary = Diary.getInstance();
+		this.serialNumber = "021";
+		this.diary = Diary.getInstance();
 	}
 
-	public M(String name;) {
-		super("M");
-		diary = Diary.getInstance();
+	public M(String name, String serialNumber) {
+		super(name);
+		this.diary = Diary.getInstance();
+		this.serialNumber = serialNumber;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
 	}
 
 	@Override
 	protected void initialize() {
 		subscribeEvent(MissionReceivedEvent.class, (c) -> {
+			c.setSubscriberSerialNumber(serialNumber);
 			diary.incrementTotal();
 			MissionInfo mission  = c.getMission();
 			Future futureAgentAvailable = getSimplePublisher().sendEvent(new AgentsAvailableEvent(mission.getSerialAgentsNumbers()));

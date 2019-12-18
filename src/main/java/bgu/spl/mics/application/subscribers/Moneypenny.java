@@ -16,21 +16,35 @@ import bgu.spl.mics.application.passiveObjects.Squad;
 public class Moneypenny extends Subscriber {
 	private Squad squad;
 	private int time;
+	private String serialNumber;
 
 	public Moneypenny() {
 		super("Moneypenny");
-		squad = Squad.getInstance();
+		this.squad = Squad.getInstance();
+		this.serialNumber = "024";
+	}
+
+	public Moneypenny(String name, String serialNumber) {
+		super(name);
+		this.squad = Squad.getInstance();
+		this.serialNumber = serialNumber;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
 	}
 
 	@Override
 	protected void initialize() {
 		subscribeEvent(AgentsAvailableEvent.class, (c) -> {
+			c.setSubscriberSerialNumber(serialNumber);
 			Boolean result = squad.getAgents(c.getSerials());
 			complete(c, result);
 		});
 
 		subscribeEvent(SendAgentsEvent.class, (c) -> {
-			squad.sendAgents(c.getSerials(), c.getTime());
+			c.setSubscriberSerialNumber(serialNumber);
+			squad.sendAgents(c.getSerials(), c.getDuration());
 			complete(c, squad.getAgentsNames(c.getSerials()));
 		});
 

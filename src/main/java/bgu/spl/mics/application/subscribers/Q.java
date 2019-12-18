@@ -15,14 +15,26 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Q extends Subscriber {
-	Inventory inventory;
+	private Inventory inventory;
 	private int time;
+	private String serialNumber;
 
 	public Q() {
 		super("Q");
-		inventory = Inventory.getInstance();
+		this.inventory = Inventory.getInstance();
+		this.serialNumber = "023";
 	}
-	
+
+	public Q(String name, String serialNumber) {
+		super(name);
+		this.inventory = Inventory.getInstance();
+		this.serialNumber = serialNumber;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
 	@Override
 	protected void initialize() {
 		subscribeEvent(GadgetAvailableEvent.class, (c) -> {
