@@ -5,13 +5,13 @@ import bgu.spl.mics.application.passiveObjects.MissionInfo;
 import java.util.List;
 
 public class IntelligenceJson {
-    List<MissionInfo> missions;
+    MissionInfo[] missions;
 
-    public List<MissionInfo> getMissions() {
+    public MissionInfo[] getMissions() {
         return missions;
     }
 
-    public void setMissions(List<MissionInfo> missions) {
+    public void setMissions(MissionInfo[] missions) {
         this.missions = missions;
     }
 

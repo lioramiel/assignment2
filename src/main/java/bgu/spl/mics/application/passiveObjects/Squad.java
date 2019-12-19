@@ -54,7 +54,7 @@ public class Squad {
      */
     public synchronized void sendAgents(List<String> serials, int time) {
         try {
-            Thread.sleep(time * 100);
+            Thread.currentThread().sleep(time * 100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

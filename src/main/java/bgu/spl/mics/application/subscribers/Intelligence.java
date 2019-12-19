@@ -29,24 +29,6 @@ public class Intelligence extends Subscriber {
 		this.missions = missions;
 	}
 
-	public void start() {
-		for(MissionInfo mission : missions)
-			sendMission(mission);
-	}
-
-	private void sendMission(MissionInfo mission) {
-		synchronized (mission) {
-			while (mission.getTimeIssued() < time) {
-				try {
-					mission.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			getSimplePublisher().sendEvent(new MissionReceivedEvent(mission));
-		}
-	}
-
 	public int getSerialNumber() {
 		return serialNumber;
 	}
@@ -55,8 +37,12 @@ public class Intelligence extends Subscriber {
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, (c) -> {
 			this.time = c.getTime();
-			for(MissionInfo mission : missions)
-				mission.notifyAll();
+			for(MissionInfo mission : missions) {
+				if (mission.getTimeIssued() == time) {
+					getSimplePublisher().sendEvent(new MissionReceivedEvent(mission));
+					System.out.println(mission.getMissionName());
+				}
+			}
 		});
 	}
 }

@@ -1,8 +1,9 @@
 package bgu.spl.mics.example;
 
-import bgu.spl.mics.example.subscribers.ExampleBroadcastSubscriber;
 import bgu.spl.mics.example.publishers.ExampleMessageSender;
+import bgu.spl.mics.example.subscribers.ExampleBroadcastSubscriber;
 import bgu.spl.mics.example.subscribers.ExampleEventHandlerSubscriber;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,6 @@ public class ExampleManager {
         creators.put("ev-handler", ExampleEventHandlerSubscriber::new);
         creators.put("brod-listener", ExampleBroadcastSubscriber::new);
         creators.put("sender", ExampleMessageSender::new);
-
         Scanner sc = new Scanner(System.in);
         boolean quit = false;
         try {
@@ -38,7 +38,6 @@ public class ExampleManager {
                                 if (creator == null) {
                                     throw new IllegalArgumentException("unknown app type, supported types: " + creators.keySet());
                                 }
-
                                 new Thread(creator.create(params[2], Arrays.copyOfRange(params, 3, params.length))).start();
                             } catch (IllegalArgumentException ex) {
                                 System.out.println("Error: " + ex.getMessage());

@@ -4,6 +4,7 @@ import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.Publisher;
 import bgu.spl.mics.application.messages.TickBroadcast;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,7 +42,7 @@ public class TimeService extends Publisher {
             public void run() {
                 Broadcast tickBroadcast = new TickBroadcast(time);
                 getSimplePublisher().sendBroadcast(tickBroadcast);
-                System.out.println(time * 100);
+                System.out.println(System.currentTimeMillis());
                 time = time + 1;
                 if (duration * 100 < time * 100)
                     timer.cancel();

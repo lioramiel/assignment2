@@ -6,7 +6,7 @@ import java.util.List;
 public class ServicesJson {
     private int M;
     private int Moneypenny;
-    private List<IntelligenceJson> intelligence;
+    private IntelligenceJson[] intelligence;
     private int time;
 
     public int getM() {
@@ -25,11 +25,11 @@ public class ServicesJson {
         Moneypenny = moneypenny;
     }
 
-    public List<IntelligenceJson> getIntelligence() {
+    public IntelligenceJson[] getIntelligence() {
         return intelligence;
     }
 
-    public void setIntelligence(List<IntelligenceJson> intelligence) {
+    public void setIntelligence(IntelligenceJson[] intelligence) {
         this.intelligence = intelligence;
     }
 

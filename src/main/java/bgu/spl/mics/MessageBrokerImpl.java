@@ -23,72 +23,89 @@ public class MessageBrokerImpl implements MessageBroker {
     private Map<Class<? extends Broadcast>, List<Subscriber>> broadcastsSubscribers;
 
     private MessageBrokerImpl() {
+//        System.out.println("MessageBrokerImpl");
         subscribersQueuesMap = new ConcurrentHashMap<>();
         eventsSubscribers = new ConcurrentHashMap<>();
         broadcastsSubscribers = new ConcurrentHashMap<>();
         futuresMap = new ConcurrentHashMap<>();
-        eventsSubscribers.put(AgentsAvailableEvent.class, new ConcurrentLinkedQueue<>());
-        eventsSubscribers.put(GadgetAvailableEvent.class, new ConcurrentLinkedQueue<>());
-        eventsSubscribers.put(MissionReceivedEvent.class, new ConcurrentLinkedQueue<>());
-        eventsSubscribers.put(ReleaseAgentsEvent.class, new ConcurrentLinkedQueue<>());
-        eventsSubscribers.put(SendAgentsEvent.class, new ConcurrentLinkedQueue<>());
-        broadcastsSubscribers.put(TickBroadcast.class, new LinkedList<>());
     }
 
     /**
      * Retrieves the single instance of this class.
      */
     public static MessageBrokerImpl getInstance() {
+//        System.out.println("getInstance");
         return SingletonHolder.instance;
     }
 
     @Override
-    public <T> void subscribeEvent(Class<? extends Event<T>> type, Subscriber m) {
+    public synchronized <T> void subscribeEvent(Class<? extends Event<T>> type, Subscriber m) {
+//        System.out.println("subscribeEvent");
+        if (!eventsSubscribers.containsKey(type))
+            eventsSubscribers.put(type, new ConcurrentLinkedQueue<>());
         eventsSubscribers.get(type).add(m);
     }
 
     @Override
-    public void subscribeBroadcast(Class<? extends Broadcast> type, Subscriber m) {
-        broadcastsSubscribers.get(type).add(m);
+    public synchronized void subscribeBroadcast(Class<? extends Broadcast> type, Subscriber m) {
+//        System.out.println("subscribeBroadcast");
+        if (!broadcastsSubscribers.containsKey(type))
+            broadcastsSubscribers.put(type, new LinkedList<>());
+        synchronized (broadcastsSubscribers.get(type)) {
+            broadcastsSubscribers.get(type).add(m);
+        }
     }
 
     @Override
     public <T> void complete(Event<T> e, T result) {
+//        System.out.println("complete");
         futuresMap.get(e).resolve(result);
     }
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        for (Subscriber s : broadcastsSubscribers.get(b.getClass()))
-            subscribersQueuesMap.get(s).add(b);
+//        System.out.println("sendBroadcast");
+        if (broadcastsSubscribers == null || broadcastsSubscribers.isEmpty() || broadcastsSubscribers.get(b.getClass()) == null || broadcastsSubscribers.get(b.getClass()).isEmpty())
+            return;
+        // TODO: check why it throws null pointer exception
+        synchronized (broadcastsSubscribers.get(b.getClass())) {
+            for (Subscriber s : broadcastsSubscribers.get(b.getClass())) {
+                subscribersQueuesMap.get(s).add(b);
+                synchronized (s) {
+                    s.notifyAll();
+                }
+            }
+        }
     }
-
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
+//        System.out.println("sendEvent");
         Queue<Subscriber> eTypeSubscribersQueue = eventsSubscribers.get(e.getClass());
-        if (eTypeSubscribersQueue.isEmpty())
+        if (eTypeSubscribersQueue == null || eTypeSubscribersQueue.isEmpty())
             return null;
         Subscriber subscriber = eTypeSubscribersQueue.poll();
+        Future<T> future = new Future<>();
+        futuresMap.put(e, future);
+        System.out.println("dddddd");
         synchronized (subscriber) {
             subscribersQueuesMap.get(subscriber).add(e);
             subscriber.notifyAll();
         }
+        System.out.println("cccccc");
         eTypeSubscribersQueue.add(subscriber);
-        Future<T> future = new Future<>();
-        futuresMap.put(e, future);
         return future;
     }
 
     @Override
     public void register(Subscriber m) {
-        subscribersQueuesMap.put(m, new LinkedList<Message>());
-        Thread t = new Thread(m);
-        t.start();
+//        System.out.println("register");
+        subscribersQueuesMap.put(m, new ConcurrentLinkedQueue<>());
     }
 
     @Override
     public void unregister(Subscriber m) {
+//        System.out.println("unregister");
         subscribersQueuesMap.remove(m);
         for (Class<? extends Event> type : eventsSubscribers.keySet())
             eventsSubscribers.get(type).remove(m);
@@ -98,6 +115,7 @@ public class MessageBrokerImpl implements MessageBroker {
 
     @Override
     public Message awaitMessage(Subscriber m) throws InterruptedException {
+//        System.out.println("awaitMessage");
         synchronized (m) {
             while (subscribersQueuesMap.get(m).isEmpty())
                 m.wait();

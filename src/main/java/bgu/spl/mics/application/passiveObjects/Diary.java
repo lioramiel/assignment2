@@ -77,7 +77,7 @@ public class Diary {
      */
     public AtomicInteger getTotal() {
         return total;
-    }
+    } //TODO: cast to int
 
     /**
      * Increments the total number of received missions by 1

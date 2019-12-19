@@ -5,13 +5,13 @@ import bgu.spl.mics.application.passiveObjects.Agent;
 import java.util.List;
 
 public class SquadJson {
-    private List<Agent> squad;
+    private Agent[] squad;
 
-    public List<Agent> getSquad() {
+    public Agent[] getSquad() {
         return squad;
     }
 
-    public void setSquad(List<Agent> squad) {
+    public void setSquad(Agent[] squad) {
         this.squad = squad;
     }
 }

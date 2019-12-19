@@ -39,19 +39,32 @@ public class M extends Subscriber {
 	@Override
 	protected void initialize() {
 		subscribeEvent(MissionReceivedEvent.class, (c) -> {
+			System.out.println("1.M - " + serialNumber +" : " + System.currentTimeMillis());
 			diary.incrementTotal();
+			System.out.println("2.M - " + serialNumber +" : " + System.currentTimeMillis());
 			MissionInfo mission  = c.getMission();
+			System.out.println("3.M - " + serialNumber +" : " + System.currentTimeMillis());
 			Future futureAgentAvailable = getSimplePublisher().sendEvent(new AgentsAvailableEvent(mission.getSerialAgentsNumbers()));
+			System.out.println("4.M - " + serialNumber +" : " + System.currentTimeMillis());
 			Integer moneypennySerialNum = (Integer) futureAgentAvailable.get();
+			System.out.println("5.M - " + serialNumber +" : " + System.currentTimeMillis());
 			Future futureGadgetAvailable = getSimplePublisher().sendEvent(new GadgetAvailableEvent(mission.getGadget()));
+			System.out.println("6.M - " + serialNumber +" : " + System.currentTimeMillis());
 			Integer QTime = (Integer) futureGadgetAvailable.get();
-			if(time < mission.getTimeExpired() && QTime != -1) {
+			System.out.println("7.M - " + serialNumber +" : " + System.currentTimeMillis());
+			if(time < mission.getTimeExpired() && moneypennySerialNum != -1 && QTime != -1) {
+				System.out.println("8.M - " + serialNumber +" : " + System.currentTimeMillis());
 				Future futureSendAgent = getSimplePublisher().sendEvent(new SendAgentsEvent(mission.getSerialAgentsNumbers(), mission.getDuration()));
+				System.out.println("9.M - " + serialNumber +" : " + System.currentTimeMillis());
 				List<String> agentsName = (List<String>) futureSendAgent.get();
+				System.out.println("10.M - " + serialNumber +" : " + System.currentTimeMillis());
 				Report report = new Report(mission.getMissionName(), getSerialNumber(), moneypennySerialNum.intValue(), mission.getSerialAgentsNumbers(), agentsName, mission.getGadget(), mission.getTimeIssued(), QTime, time);
+				System.out.println("11.M - " + serialNumber +" : " + System.currentTimeMillis());
 				diary.addReport(report);
 			} else {
+				System.out.println("12.M - " + serialNumber +" : " + System.currentTimeMillis());
 				getSimplePublisher().sendEvent(new ReleaseAgentsEvent(mission.getSerialAgentsNumbers()));
+				System.out.println("13.M - " + serialNumber +" : " + System.currentTimeMillis());
 			}
 		});
 

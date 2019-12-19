@@ -3,13 +3,13 @@ package bgu.spl.mics.application.JsonObjects;
 import java.util.List;
 
 public class InventoryJson {
-    private List<String> gadgets;
+    private String[] gadgets;
 
-    public List<String> getGadgets() {
+    public String[] getGadgets() {
         return gadgets;
     }
 
-    public void setGadgets(List<String> gadgets) {
+    public void setGadgets(String[] gadgets) {
         this.gadgets = gadgets;
     }
 }
