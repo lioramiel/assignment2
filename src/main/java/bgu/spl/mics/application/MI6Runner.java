@@ -2,7 +2,6 @@ package bgu.spl.mics.application;
 
 import bgu.spl.mics.application.JsonObjects.InputJson;
 import bgu.spl.mics.application.JsonObjects.IntelligenceJson;
-import bgu.spl.mics.application.JsonObjects.test;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
@@ -82,7 +81,7 @@ public class MI6Runner {
 //        }
         System.out.println("lock 2");
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

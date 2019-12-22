@@ -42,7 +42,7 @@ public class TimeService extends Publisher {
             public void run() {
                 Broadcast tickBroadcast = new TickBroadcast(time);
                 getSimplePublisher().sendBroadcast(tickBroadcast);
-                System.out.println(System.currentTimeMillis());
+                System.out.println(System.currentTimeMillis() + " : " + time);
                 time = time + 1;
                 if (duration * 100 < time * 100)
                     timer.cancel();

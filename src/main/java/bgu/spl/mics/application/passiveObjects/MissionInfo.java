@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class MissionInfo {
 
-	private String missionName;
+	private String name;
 	private List<String> serialAgentsNumbers;
 	private String gadget;
 	private int timeIssued;
@@ -26,14 +26,14 @@ public class MissionInfo {
 	 * Retrieves the name of the mission.
 	 */
 	public String getMissionName() {
-		return missionName;
+		return name;
 	}
 
 	/**
 	 * Sets the name of the mission.
 	 */
 	public void setMissionName(String missionName) {
-		this.missionName = missionName;
+		this.name = missionName;
 	}
 
 	/**

@@ -10,10 +10,12 @@ import java.util.*;
  */
 public class Squad {
 
-    private static class SingeltonHolder {
+    private static class SingletonHolder {
         private static Squad instance = new Squad();
     }
+
     private Map<String, Agent> agents;
+    private Object lock = new Object();
 
     private Squad() {
         agents = new HashMap<>();
@@ -23,7 +25,7 @@ public class Squad {
      * Retrieves the single instance of this class.
      */
     public static Squad getInstance() {
-        return SingeltonHolder.instance;
+        return SingletonHolder.instance;
     }
 
     /**
@@ -41,10 +43,13 @@ public class Squad {
     /**
      * Releases agents.
      */
-    public synchronized void releaseAgents(List<String> serials) {
+    public void releaseAgents(List<String> serials) {
+//        System.out.println("releaseAgents" + " - " + Thread.currentThread().getId());
         for (String sn : serials)
             agents.get(sn).release();
-        this.notifyAll();
+        synchronized (lock) {
+            lock.notifyAll();
+        }
     }
 
     /**
@@ -52,12 +57,14 @@ public class Squad {
      *
      * @param time milliseconds to sleep
      */
-    public synchronized void sendAgents(List<String> serials, int time) {
+    public void sendAgents(List<String> serials, int time) {
+        System.out.println("sendAgents" + " - " + Thread.currentThread().getId());
         try {
             Thread.currentThread().sleep(time * 100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("sendAgents" + " - " + Thread.currentThread().getId());
         releaseAgents(serials);
     }
 
@@ -69,13 +76,16 @@ public class Squad {
      */
     public synchronized boolean getAgents(List<String> serials) {
         Agent temp;
-        for (String sn : serials) {
+        for (String sn : serials)
             if (!agents.containsKey(sn))
                 return false;
+        for (String sn : serials) {
             temp = agents.get(sn);
             while (!temp.isAvailable()) {
                 try {
-                    this.wait();
+                    synchronized (lock) {
+                        lock.wait();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

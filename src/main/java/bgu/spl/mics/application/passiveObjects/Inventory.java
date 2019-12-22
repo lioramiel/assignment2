@@ -18,7 +18,7 @@ import java.util.List;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class Inventory {
-	private static class SingeltonHolder {
+	private static class SingletonHolder {
         private static Inventory instance = new Inventory();
     }
 	private List<String> gadgets;
@@ -31,7 +31,7 @@ public class Inventory {
 	 * Retrieves the single instance of this class.
 	 */
 	public static Inventory getInstance() {
-		return SingeltonHolder.instance;
+		return SingletonHolder.instance;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class Inventory {
 	 *
 	 * <p>
 	 * Prints to a file name @filename a serialized object List<String> which is a
-	 * list of all the of the gadgeds.
+	 * list of all the of the Gadgets.
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){

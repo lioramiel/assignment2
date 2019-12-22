@@ -75,9 +75,9 @@ public class Diary {
      *
      * @return the total number of received missions (executed / aborted) be all the M-instances.
      */
-    public AtomicInteger getTotal() {
-        return total;
-    } //TODO: cast to int
+    public int getTotal() {
+        return total.intValue();
+    }
 
     /**
      * Increments the total number of received missions by 1

@@ -38,6 +38,7 @@ public class Moneypenny extends Subscriber {
 	@Override
 	protected void initialize() {
 		subscribeEvent(AgentsAvailableEvent.class, (c) -> {
+			System.out.println("moneytpenny: " + serialNumber);
 			Boolean agentsAvailable = squad.getAgents(c.getSerials());
 			if(agentsAvailable)
 				complete(c, getSerialNumber());
@@ -54,9 +55,9 @@ public class Moneypenny extends Subscriber {
 			squad.releaseAgents(c.getSerials());
 			complete(c, 0);
 		});
-
-		subscribeBroadcast(TickBroadcast.class, (c) -> {
-			this.time = c.getTime();
-		});
+//
+//		subscribeBroadcast(TickBroadcast.class, (c) -> {
+//			this.time = c.getTime();
+//		});
 	}
 }

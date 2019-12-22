@@ -80,19 +80,17 @@ public class MessageBrokerImpl implements MessageBroker {
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-//        System.out.println("sendEvent");
+        System.out.println("messagebroker sendEvent");
         Queue<Subscriber> eTypeSubscribersQueue = eventsSubscribers.get(e.getClass());
         if (eTypeSubscribersQueue == null || eTypeSubscribersQueue.isEmpty())
             return null;
         Subscriber subscriber = eTypeSubscribersQueue.poll();
         Future<T> future = new Future<>();
         futuresMap.put(e, future);
-        System.out.println("dddddd");
         synchronized (subscriber) {
             subscribersQueuesMap.get(subscriber).add(e);
             subscriber.notifyAll();
         }
-        System.out.println("cccccc");
         eTypeSubscribersQueue.add(subscriber);
         return future;
     }
