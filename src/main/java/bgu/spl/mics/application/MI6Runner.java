@@ -1,5 +1,6 @@
 package bgu.spl.mics.application;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.application.JsonObjects.InputJson;
 import bgu.spl.mics.application.JsonObjects.IntelligenceJson;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -23,22 +24,17 @@ import java.util.List;
  * In the end, you should output serialized objects.
  */
 public class MI6Runner {
-    public static void main(String[] args) {
-        Object lock = new Object();
-        Gson gson = new Gson();
-        InputJson data = null;
-        try (JsonReader reader = new JsonReader(new FileReader(args[0]))) {
-            data = gson.fromJson(reader, InputJson.class);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static InputJson input;
+    private static Inventory inventory;
+    private static Squad squad;
+    private static Future futureFinish;
 
-        Inventory inventory = Inventory.getInstance();
-        inventory.load(data.getInventory());
-        Squad squad = Squad.getInstance();
-        squad.load(data.getSquad());
+    public static void main(String[] args) {
+        loadDataFromJSON(args[0]);
+        initializePassiveObjects();
+        futureFinish = new Future();
+
+
 
         List<Thread> threads = new ArrayList<>(); //TODO: implements it better
 
@@ -46,20 +42,20 @@ public class MI6Runner {
         Thread t = new Thread(q);
         threads.add(t);
 
-        for(int i = 0; i < data.getServices().getM(); i++) {
+        for(int i = 0; i < input.getServices().getM(); i++) {
             M m = new M("M" + String.valueOf(i + 1), i + 1);
             Thread r = new Thread(m);
             threads.add(r);
         }
 
-        for(int i = 0; i < data.getServices().getMoneypenny(); i++) {
+        for(int i = 0; i < input.getServices().getMoneypenny(); i++) {
             Moneypenny moneypenny = new Moneypenny("Moneypenny" + String.valueOf(i + 1), i + 1);
             Thread r = new Thread(moneypenny);
             threads.add(r);
         }
 
         int i = 0;
-        for(IntelligenceJson intelligence : data.getServices().getIntelligence()) {
+        for(IntelligenceJson intelligence : input.getServices().getIntelligence()) {
             List<MissionInfo> missions = new ArrayList<>();
             for(MissionInfo missionInfo : intelligence.getMissions())
                 missions.add(missionInfo);
@@ -69,7 +65,7 @@ public class MI6Runner {
             i++;
         }
 
-        TimeService timeService = new TimeService(data.getServices().getTime(), "TimeService");
+        TimeService timeService = new TimeService(input.getServices().getTime(), "TimeService" , futureFinish);
         Thread d = new Thread(timeService);
         threads.add(d);
 
@@ -100,5 +96,23 @@ public class MI6Runner {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    private static void loadDataFromJSON(String fileName) {
+        Gson gson = new Gson();
+        try (JsonReader reader = new JsonReader(new FileReader(fileName))) {
+            input =  gson.fromJson(reader, InputJson.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void initializePassiveObjects() {
+        Inventory inventory = Inventory.getInstance();
+        inventory.load(input.getInventory());
+        Squad squad = Squad.getInstance();
+        squad.load(input.getSquad());
     }
 }

@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.publishers;
 
 import bgu.spl.mics.Broadcast;
+import bgu.spl.mics.Future;
 import bgu.spl.mics.Publisher;
 import bgu.spl.mics.application.messages.TickBroadcast;
 
@@ -21,18 +22,21 @@ public class TimeService extends Publisher {
     private int duration;
     private int time;
     private Timer timer;
+    private Future futureFinish;
 
-
-    public TimeService(int duration, String name) {
+    public TimeService(int duration, String name, Future futureFinish) {
         super(name);
         this.duration = duration;
         this.time = 0;
+        this.futureFinish = futureFinish;
     }
 
     @Override
     protected void initialize() {
 
     }
+
+    long begin = 0;
 
     @Override
     public void run() {
@@ -43,9 +47,14 @@ public class TimeService extends Publisher {
                 Broadcast tickBroadcast = new TickBroadcast(time);
                 getSimplePublisher().sendBroadcast(tickBroadcast);
                 System.out.println(System.currentTimeMillis() + " : " + time);
+                if(begin == 0)
+                    begin = System.currentTimeMillis();
                 time = time + 1;
-                if (duration * 100 < time * 100)
+                if (duration * 100 < time * 100) {
                     timer.cancel();
+                    System.out.println(System.currentTimeMillis() - begin);
+                    futureFinish.resolve(true);
+                }
             }
         }, 0, 100);
     }
