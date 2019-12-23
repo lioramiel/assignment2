@@ -19,6 +19,7 @@ public class M extends Subscriber {
 	private Diary diary;
 	private int time;
 	private int serialNumber;
+	private int duration;
 
 	public M() {
 		super("M");
@@ -26,10 +27,11 @@ public class M extends Subscriber {
 		this.diary = Diary.getInstance();
 	}
 
-	public M(String name, int serialNumber) {
+	public M(String name, int serialNumber, int duration) {
 		super(name);
 		this.diary = Diary.getInstance();
 		this.serialNumber = serialNumber;
+		this.duration = duration;
 	}
 
 	public int getSerialNumber() {
@@ -39,24 +41,48 @@ public class M extends Subscriber {
 	@Override
 	protected void initialize() {
 		subscribeEvent(MissionReceivedEvent.class, (c) -> {
+//			System.out.println("M start MissionReceivedEvent");
 			diary.incrementTotal();
 			MissionInfo mission  = c.getMission();
 			AgentsAvailableEvent agentsAvailableEvent = new AgentsAvailableEvent(mission.getSerialAgentsNumbers(), mission.getDuration());
 			Future futureAgentsAvailable = getSimplePublisher().sendEvent(agentsAvailableEvent);
-			Future futureMoneypennyResponse = (Future) futureAgentsAvailable.get();
-			Future futureGadgetAvailable = getSimplePublisher().sendEvent(new GadgetAvailableEvent(mission.getGadget()));
-			Integer QTime = (Integer) futureGadgetAvailable.get();
-			if(futureMoneypennyResponse != null && QTime != -1) {
-				futureMoneypennyResponse.resolve(true);
-				Report report = new Report(mission.getMissionName(), getSerialNumber(), agentsAvailableEvent.getMoneypennySerialNumber(), mission.getSerialAgentsNumbers(), agentsAvailableEvent.getAgentsName(), mission.getGadget(), mission.getTimeIssued(), QTime, time);
-				diary.addReport(report);
+			synchronized (this) {
+				while (!futureAgentsAvailable.isDone()) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				Future futureMoneypennyResponse = (Future) futureAgentsAvailable.get();
+				if (agentsAvailableEvent.getMoneypennySerialNumber() == -1) {
+					futureMoneypennyResponse.resolve(false);
+				} else {
+					Future futureGadgetAvailable = getSimplePublisher().sendEvent(new GadgetAvailableEvent(mission.getGadget()));
+					Integer QTime = (Integer) futureGadgetAvailable.get(); //TODO: did problem
+					if (time <= mission.getTimeExpired() && QTime != -1) {
+						futureMoneypennyResponse.resolve(true);
+						Report report = new Report(mission.getMissionName(), getSerialNumber(), agentsAvailableEvent.getMoneypennySerialNumber(), mission.getSerialAgentsNumbers(), agentsAvailableEvent.getAgentsName(), mission.getGadget(), mission.getTimeIssued(), QTime, time);
+						diary.addReport(report);
+					} else {
+						futureMoneypennyResponse.resolve(false);
+					}
+				}
 			}
-			else
-				futureMoneypennyResponse.resolve(false);
+//			System.out.println("M finished MissionReceivedEvent");
 		});
 
 		subscribeBroadcast(TickBroadcast.class, (c) -> {
 			this.time = c.getTime();
+			if(time == this.duration)
+				this.terminate();
+			synchronized (this) {
+				this.notifyAll();
+			}
 		});
+	}
+
+	public void stop() {
+		this.terminate();
 	}
 }

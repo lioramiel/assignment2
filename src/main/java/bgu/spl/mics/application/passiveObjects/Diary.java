@@ -48,7 +48,7 @@ public class Diary {
      *
      * @param reportToAdd - the report to add
      */
-    public void addReport(Report reportToAdd) {
+    public synchronized void addReport(Report reportToAdd) {
         reports.add(reportToAdd);
     }
 

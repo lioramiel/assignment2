@@ -5,7 +5,6 @@ import bgu.spl.mics.Future;
 import bgu.spl.mics.Publisher;
 import bgu.spl.mics.application.messages.TickBroadcast;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,13 +21,15 @@ public class TimeService extends Publisher {
     private int duration;
     private int time;
     private Timer timer;
-    private Future futureFinish;
+    private Future<Boolean> futureFinish;
+    private boolean terminated = false;
 
     public TimeService(int duration, String name, Future futureFinish) {
         super(name);
         this.duration = duration;
         this.time = 0;
         this.futureFinish = futureFinish;
+        timer = new Timer();
     }
 
     @Override
@@ -36,24 +37,24 @@ public class TimeService extends Publisher {
 
     }
 
-    long begin = 0;
+    long begin = 0; //TODO delete it
 
     @Override
     public void run() {
-        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+//                System.out.println("kkkkkkkkkk :::  " + Thread.currentThread().getId() + " : " + System.currentTimeMillis() + " : " + time);
                 Broadcast tickBroadcast = new TickBroadcast(time);
                 getSimplePublisher().sendBroadcast(tickBroadcast);
-                System.out.println(System.currentTimeMillis() + " : " + time);
+                System.out.println(Thread.currentThread().getId() + " : " + System.currentTimeMillis() + " : " + time);
                 if(begin == 0)
                     begin = System.currentTimeMillis();
                 time = time + 1;
-                if (duration * 100 < time * 100) {
+                if (duration < time) {
                     timer.cancel();
-                    System.out.println(System.currentTimeMillis() - begin);
                     futureFinish.resolve(true);
+                    System.out.println(String.valueOf(System.currentTimeMillis() - begin));
                 }
             }
         }, 0, 100);

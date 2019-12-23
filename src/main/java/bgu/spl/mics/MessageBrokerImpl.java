@@ -58,7 +58,6 @@ public class MessageBrokerImpl implements MessageBroker {
 
     @Override
     public <T> void complete(Event<T> e, T result) {
-//        System.out.println("complete");
         futuresMap.get(e).resolve(result);
     }
 
@@ -68,19 +67,23 @@ public class MessageBrokerImpl implements MessageBroker {
         if (broadcastsSubscribers == null || broadcastsSubscribers.isEmpty() || broadcastsSubscribers.get(b.getClass()) == null || broadcastsSubscribers.get(b.getClass()).isEmpty())
             return;
         // TODO: check why it throws null pointer exception
-        synchronized (broadcastsSubscribers.get(b.getClass())) {
-            for (Subscriber s : broadcastsSubscribers.get(b.getClass())) {
+//        synchronized (broadcastsSubscribers.get(b.getClass())) {
+        for (Subscriber s : broadcastsSubscribers.get(b.getClass())) {
+//            System.out.println("sendBroadcast2");
+            if (subscribersQueuesMap.get(s) != null) {
                 subscribersQueuesMap.get(s).add(b);
-                synchronized (s) {
+                synchronized(s) {
+//                    System.out.println("sendBroadcast3");
                     s.notifyAll();
                 }
             }
         }
+//        }
     }
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        System.out.println("messagebroker sendEvent");
+//        System.out.println("messagebroker sendEvent");
         Queue<Subscriber> eTypeSubscribersQueue = eventsSubscribers.get(e.getClass());
         if (eTypeSubscribersQueue == null || eTypeSubscribersQueue.isEmpty())
             return null;
@@ -113,12 +116,11 @@ public class MessageBrokerImpl implements MessageBroker {
 
     @Override
     public Message awaitMessage(Subscriber m) throws InterruptedException {
-//        System.out.println("awaitMessage");
         synchronized (m) {
             while (subscribersQueuesMap.get(m).isEmpty())
                 m.wait();
-            return subscribersQueuesMap.get(m).poll();
         }
+        return subscribersQueuesMap.get(m).poll();
     }
 
 

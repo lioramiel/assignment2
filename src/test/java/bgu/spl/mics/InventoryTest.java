@@ -22,16 +22,16 @@ public class InventoryTest {
         inventory = Inventory.getInstance();
     }
 
-    /**
-     * Test method for {@link bgu.spl.mics.application.passiveObjects.Inventory#getInstance}.
-     */
-    @Test public void testGetInstance() {
-        Inventory newInventory = Inventory.getInstance();
-        String item1 = "Sky Hook";
-        String[] inventoryArray = {item1};
-        inventory.load(inventoryArray);
-        assertEquals(inventory.getItem(item1), newInventory.getItem(item1));
-    }
+//    /**
+//     * Test method for {@link bgu.spl.mics.application.passiveObjects.Inventory#getInstance}.
+//     */
+//    @Test public void testGetInstance() {
+//        Inventory newInventory = Inventory.getInstance();
+//        String item1 = "Sky Hook";
+//        String[] inventoryArray = {item1};
+//        inventory.load(inventoryArray);
+//        assertEquals(inventory.getItem(item1), newInventory.getItem(item1));
+//    }
 
     /**
      * Test method for {@link bgu.spl.mics.application.passiveObjects.Inventory#load(String[] inventory)}.

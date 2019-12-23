@@ -1,12 +1,10 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.Future;
+import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.JsonObjects.InputJson;
 import bgu.spl.mics.application.JsonObjects.IntelligenceJson;
-import bgu.spl.mics.application.passiveObjects.Diary;
-import bgu.spl.mics.application.passiveObjects.Inventory;
-import bgu.spl.mics.application.passiveObjects.MissionInfo;
-import bgu.spl.mics.application.passiveObjects.Squad;
+import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.publishers.TimeService;
 import bgu.spl.mics.application.subscribers.Intelligence;
 import bgu.spl.mics.application.subscribers.M;
@@ -15,6 +13,7 @@ import bgu.spl.mics.application.subscribers.Q;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
+import javax.management.monitor.MonitorNotification;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,75 +26,23 @@ public class MI6Runner {
     private static InputJson input;
     private static Inventory inventory;
     private static Squad squad;
-    private static Future futureFinish;
+    private static Future<Boolean> futureFinish;
+    private static List<Thread> threads;
+    private static Q q;
+    private static M[] mArray;
+    private static Moneypenny[] moneypenniesArray;
+    private static Intelligence[] intelligencesArray;
 
     public static void main(String[] args) {
+        threads = new ArrayList<>();
+        futureFinish = new Future();
         loadDataFromJSON(args[0]);
         initializePassiveObjects();
-        futureFinish = new Future();
-
-
-
-        List<Thread> threads = new ArrayList<>(); //TODO: implements it better
-
-        Q q = new Q();
-        Thread t = new Thread(q);
-        threads.add(t);
-
-        for(int i = 0; i < input.getServices().getM(); i++) {
-            M m = new M("M" + String.valueOf(i + 1), i + 1);
-            Thread r = new Thread(m);
-            threads.add(r);
-        }
-
-        for(int i = 0; i < input.getServices().getMoneypenny(); i++) {
-            Moneypenny moneypenny = new Moneypenny("Moneypenny" + String.valueOf(i + 1), i + 1);
-            Thread r = new Thread(moneypenny);
-            threads.add(r);
-        }
-
-        int i = 0;
-        for(IntelligenceJson intelligence : input.getServices().getIntelligence()) {
-            List<MissionInfo> missions = new ArrayList<>();
-            for(MissionInfo missionInfo : intelligence.getMissions())
-                missions.add(missionInfo);
-            Intelligence newIntelligence = new Intelligence("Intelligence" + String.valueOf(i+1), i+1, missions);
-            Thread r = new Thread(newIntelligence);
-            threads.add(r);
-            i++;
-        }
-
-        TimeService timeService = new TimeService(input.getServices().getTime(), "TimeService" , futureFinish);
-        Thread d = new Thread(timeService);
-        threads.add(d);
-
-        for(Thread l : threads)
-            l.start();
-
-//        while (timeService.getTime() < data.getServices().getTime()) {
-//            System.out.println("lock 2");
-//        }
-        System.out.println("lock 2");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for(Thread l : threads)
-            l.stop();
-        inventory.printToFile(args[1]);
-        Diary.getInstance().printToFile(args[2]);
-        System.out.println("lock 3");
-//        test t = new test();
-//        try {
-//            Writer writer = new FileWriter("test.json");
-//            Gson gson2 = new GsonBuilder().create();
-//            gson2.toJson(t, writer);
-//            writer.flush();
-//            writer.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        createActiveObjects();
+        runThreads();
+        Boolean finished = futureFinish.get();
+        if(finished)
+            finishApp(args[1], args[2]);
     }
 
     private static void loadDataFromJSON(String fileName) {
@@ -110,9 +57,73 @@ public class MI6Runner {
     }
 
     private static void initializePassiveObjects() {
-        Inventory inventory = Inventory.getInstance();
+        inventory = Inventory.getInstance();
         inventory.load(input.getInventory());
-        Squad squad = Squad.getInstance();
+        squad = Squad.getInstance();
         squad.load(input.getSquad());
+    }
+
+    private static void createActiveObjects() {
+        createQ();
+        createMs();
+        createMoneypennys();
+        createIntelligences();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        createTimeService();
+    }
+
+    private static void createQ() {
+        q = new Q("Q", 1, input.getServices().getTime());
+        Thread t = new Thread(q);
+        threads.add(t);
+    }
+
+    private static void createMs() {
+        mArray = new M[input.getServices().getM()];
+        for(int i = 0; i < mArray.length; i++) {
+            mArray[i] = new M("M" + String.valueOf(i + 1), i + 1, input.getServices().getTime());
+            Thread r = new Thread(mArray[i]);
+            threads.add(r);
+        }
+    }
+
+    private static void createMoneypennys() {
+        moneypenniesArray = new Moneypenny[input.getServices().getMoneypenny()];
+        for(int i = 0; i < moneypenniesArray.length; i++) {
+            moneypenniesArray[i] = new Moneypenny("Moneypenny" + String.valueOf(i + 1), i + 1, input.getServices().getTime());
+            Thread r = new Thread(moneypenniesArray[i]);
+            threads.add(r);
+        }
+    }
+
+    private static void createIntelligences() {
+        intelligencesArray = new Intelligence[input.getServices().getIntelligence().length];
+        for(int i = 0; i < input.getServices().getIntelligence().length; i++) {
+            intelligencesArray[i] = new Intelligence("Intelligence" + String.valueOf(i+1), i+1, input.getServices().getIntelligence()[i].getMissions(), input.getServices().getTime());
+            Thread r = new Thread(intelligencesArray[i]);
+            threads.add(r);
+        }
+    }
+
+    private static void createTimeService() {
+        TimeService timeService = new TimeService(input.getServices().getTime(), "TimeService" , futureFinish);
+        Thread d = new Thread(timeService);
+        threads.add(d);
+    }
+
+    private static void runThreads() {
+        for(Thread l : threads)
+            l.start();
+    }
+
+    private static void finishApp(String inventoryFileName, String diaryFileName) {
+        inventory.printToFile(inventoryFileName);
+        Diary.getInstance().printToFile(diaryFileName);
+        inventory.load(new String [0]);
+        squad.load(new Agent[0]);
     }
 }

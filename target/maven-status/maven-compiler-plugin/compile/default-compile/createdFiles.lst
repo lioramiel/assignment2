@@ -8,6 +8,7 @@ bgu/spl/mics/Subscriber.class
 bgu/spl/mics/MessageBrokerImpl.class
 bgu/spl/mics/application/messages/GadgetAvailableEvent.class
 bgu/spl/mics/application/passiveObjects/MissionInfo.class
+bgu/spl/mics/application/passiveObjects/Inventory$SingletonHolder.class
 bgu/spl/mics/application/JsonObjects/ServicesJson.class
 bgu/spl/mics/application/MI6Runner.class
 bgu/spl/mics/application/subscribers/Intelligence.class
@@ -16,13 +17,10 @@ bgu/spl/mics/Callback.class
 bgu/spl/mics/application/passiveObjects/Diary$SingletonHolder.class
 bgu/spl/mics/MessageBrokerImpl$SingletonHolder.class
 bgu/spl/mics/example/publishers/ExampleMessageSender.class
-bgu/spl/mics/application/JsonObjects/test.class
 bgu/spl/mics/application/publishers/TimeService$1.class
 bgu/spl/mics/MessageBrokerImpl$1.class
-bgu/spl/mics/application/messages/ReleaseAgentsEvent.class
 bgu/spl/mics/application/publishers/TimeService.class
 bgu/spl/mics/RunnableSubPub.class
-bgu/spl/mics/application/messages/SendAgentsEvent.class
 bgu/spl/mics/application/passiveObjects/Inventory$1.class
 bgu/spl/mics/application/passiveObjects/Report.class
 bgu/spl/mics/example/messages/ExampleEvent.class
@@ -38,13 +36,12 @@ bgu/spl/mics/Message.class
 bgu/spl/mics/application/messages/FinishBroadcast.class
 bgu/spl/mics/SimplePublisher.class
 bgu/spl/mics/application/passiveObjects/Agent.class
-bgu/spl/mics/application/passiveObjects/Squad$SingeltonHolder.class
 bgu/spl/mics/Broadcast.class
 bgu/spl/mics/application/JsonObjects/InventoryJson.class
+bgu/spl/mics/application/passiveObjects/Squad$SingletonHolder.class
 bgu/spl/mics/Future.class
 bgu/spl/mics/application/subscribers/Q.class
 bgu/spl/mics/application/passiveObjects/Diary$1.class
-bgu/spl/mics/application/passiveObjects/Inventory$SingeltonHolder.class
 bgu/spl/mics/application/subscribers/M.class
 bgu/spl/mics/application/passiveObjects/Squad.class
 bgu/spl/mics/example/messages/ExampleBroadcast.class

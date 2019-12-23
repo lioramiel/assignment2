@@ -13,6 +13,4 @@ public class TickBroadcast implements Broadcast {
     public int getTime() {
         return time;
     }
-
-
 }

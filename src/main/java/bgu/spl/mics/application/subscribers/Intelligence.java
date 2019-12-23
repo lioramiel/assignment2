@@ -4,7 +4,6 @@ import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.messages.MissionReceivedEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
-import java.util.List;
 
 /**
  * A Publisher\Subscriber.
@@ -16,17 +15,19 @@ import java.util.List;
 public class Intelligence extends Subscriber {
 	private int time;
 	private int serialNumber;
-	private List<MissionInfo> missions;
+	private MissionInfo[] missions;
+	private int duration;
 
 	public Intelligence() {
 		super("Intelligence");
 		this.serialNumber = 0;
 	}
 
-	public Intelligence(String name, int serialNumber, List<MissionInfo> missions) {
+	public Intelligence(String name, int serialNumber, MissionInfo[] missions, int duration) {
 		super(name);
 		this.serialNumber = serialNumber;
 		this.missions = missions;
+		this.duration = duration;
 	}
 
 	public int getSerialNumber() {
@@ -37,10 +38,12 @@ public class Intelligence extends Subscriber {
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, (c) -> {
 			this.time = c.getTime();
+			if(this.time == this.duration)
+				this.terminate();
 			for(MissionInfo mission : missions) {
 				if (mission.getTimeIssued() == time) {
 					getSimplePublisher().sendEvent(new MissionReceivedEvent(mission));
-					System.out.println(mission.getMissionName());
+//					System.out.println(mission.getMissionName());
 				}
 			}
 		});

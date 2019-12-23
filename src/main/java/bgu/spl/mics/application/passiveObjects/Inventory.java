@@ -43,6 +43,7 @@ public class Inventory {
 	 *                  of the inventory.
 	 */
 	public void load(String[] inventory) {
+		gadgets.clear();
 		for (String gadget : inventory)
 			gadgets.add(gadget);
 	}
@@ -54,7 +55,7 @@ public class Inventory {
 	 * @param gadget Name of the gadget to check if available
 	 * @return ‘false’ if the gadget is missing, and ‘true’ otherwise
 	 */
-	public boolean getItem(String gadget) {
+	public synchronized boolean getItem(String gadget) {
 		if (gadgets.contains(gadget)) {
 			gadgets.remove(gadget);
 			return true;
