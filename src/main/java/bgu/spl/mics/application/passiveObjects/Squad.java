@@ -40,6 +40,9 @@ public class Squad {
         this.agents.clear();
         for (Agent a : agents)
             this.agents.put(a.getSerialNumber(), a);
+        synchronized (this) {
+            this.notifyAll();
+        }
     }
 
     /**
@@ -48,10 +51,10 @@ public class Squad {
     public void releaseAgents(List<String> serials) {
 //        System.out.println("releaseAgents" + " - " + Thread.currentThread().getId());
         for (String sn : serials) {
-            if(agents.containsKey(sn)) {
+            if (agents.containsKey(sn)) {
                 agents.get(sn).release();
-                synchronized (agents.get(sn)) {
-                    agents.get(sn).notifyAll();
+                synchronized (this) {
+                    this.notifyAll();
                 }
             }
         }
@@ -63,27 +66,11 @@ public class Squad {
      * @param time milliseconds to sleep
      */
     public void sendAgents(List<String> serials, int time) {
-//        System.out.println("sendAgents" + "  - " + Thread.currentThread().getId());
-//        System.out.println("sendAgents" + "  - " + System.currentTimeMillis());
         try {
             Thread.currentThread().sleep(time * 100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        for (String sn : serials) {
-//            if(agents.containsKey(sn)) {
-////                agents.get(sn).release();
-//                synchronized (agents.get(sn)) {
-//                    try {
-//                        agents.get(sn).wait(time * 100);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println("sendAgents2" + " - " + System.currentTimeMillis());
-//        System.out.println("sendAgents2" + " - " + Thread.currentThread().getId());
         releaseAgents(serials);
     }
 
@@ -94,44 +81,23 @@ public class Squad {
      * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
      */
     public synchronized boolean getAgents(List<String> serials) {
-//        System.out.println("getAgents" + " - " + Thread.currentThread().getId());
         for (String sn : serials) {
-            while (!agents.get(sn).isAvailable()) {
-                try {
-                    synchronized (agents.get(sn)) {
-                        agents.get(sn).wait();
+            if (agents.keySet().contains(sn)) {
+                while (agents.keySet().contains(sn) && !agents.get(sn).isAvailable()) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
-            if(agents.containsKey(sn))
-                agents.get(sn).acquire();
-            else {
+                if (agents.keySet().contains(sn))
+                    agents.get(sn).acquire();
+            } else {
                 releaseAgents(serials);
                 return false;
             }
         }
         return true;
-
-//        Agent agent;
-//        for (String sn : serials)
-//            if (!agents.containsKey(sn))
-//                return false;
-//        for (String sn : serials) {
-//            agent = agents.get(sn);
-//            while (!agent.isAvailable()) {
-//                try {
-//                    synchronized (agent) {
-//                        agent.wait();
-//                    }
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            agent.acquire();
-//        }
-//        return true;
     }
 
     /**
@@ -143,7 +109,8 @@ public class Squad {
     public List<String> getAgentsNames(List<String> serials) {
         List<String> names = new ArrayList<>();
         for (String sn : serials)
-            names.add(agents.get(sn).getName());
+            if(agents.keySet().contains(sn))
+                names.add(agents.get(sn).getName());
         return names;
     }
 

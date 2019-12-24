@@ -73,7 +73,7 @@ public class MI6Runner {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        createTimeService();
+        createAndRunTimeService();
     }
 
     private static void createQ() {
@@ -109,10 +109,10 @@ public class MI6Runner {
         }
     }
 
-    private static void createTimeService() {
+    private static void createAndRunTimeService() {
         TimeService timeService = new TimeService(input.getServices().getTime(), "TimeService" , futureFinish);
         Thread d = new Thread(timeService);
-        threads.add(d);
+        d.start();
     }
 
     private static void runThreads() {

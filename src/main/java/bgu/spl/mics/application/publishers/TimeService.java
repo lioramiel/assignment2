@@ -37,24 +37,17 @@ public class TimeService extends Publisher {
 
     }
 
-    long begin = 0; //TODO delete it
-
     @Override
     public void run() {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-//                System.out.println("kkkkkkkkkk :::  " + Thread.currentThread().getId() + " : " + System.currentTimeMillis() + " : " + time);
                 Broadcast tickBroadcast = new TickBroadcast(time);
                 getSimplePublisher().sendBroadcast(tickBroadcast);
-                System.out.println(Thread.currentThread().getId() + " : " + System.currentTimeMillis() + " : " + time);
-                if(begin == 0)
-                    begin = System.currentTimeMillis();
                 time = time + 1;
                 if (duration < time) {
                     timer.cancel();
                     futureFinish.resolve(true);
-                    System.out.println(String.valueOf(System.currentTimeMillis() - begin));
                 }
             }
         }, 0, 100);

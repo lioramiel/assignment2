@@ -30,10 +30,6 @@ public class Intelligence extends Subscriber {
 		this.duration = duration;
 	}
 
-	public int getSerialNumber() {
-		return serialNumber;
-	}
-
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, (c) -> {
@@ -43,7 +39,6 @@ public class Intelligence extends Subscriber {
 			for(MissionInfo mission : missions) {
 				if (mission.getTimeIssued() == time) {
 					getSimplePublisher().sendEvent(new MissionReceivedEvent(mission));
-//					System.out.println(mission.getMissionName());
 				}
 			}
 		});

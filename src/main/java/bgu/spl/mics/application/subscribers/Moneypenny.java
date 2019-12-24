@@ -35,29 +35,27 @@ public class Moneypenny extends Subscriber {
     @Override
     protected void initialize() {
         subscribeEvent(AgentsAvailableEvent.class, (c) -> {
-//            System.out.println("moneytpenny start AgentsAvailableEvent");
+            c.setAgentsName(squad.getAgentsNames(c.getSerials()));
             Boolean agentsAvailable = squad.getAgents(c.getSerials());
             Future<Boolean> gadgetsAvailableFuture = new Future<>();
-            if(agentsAvailable) {
-				c.setMoneypennySerialNumber(serialNumber);
-				c.setAgentsName(squad.getAgentsNames(c.getSerials()));
-				complete(c, gadgetsAvailableFuture);
-				Boolean gadgetAvailable = gadgetsAvailableFuture.get();
-				if (gadgetAvailable)
+            if (agentsAvailable & time <= this.duration) {
+                c.setMoneypennySerialNumber(serialNumber);
+                complete(c, gadgetsAvailableFuture);
+                Boolean gadgetAvailable = gadgetsAvailableFuture.get();
+                if (gadgetAvailable)
                     squad.sendAgents(c.getSerials(), c.getMissionDuration());
                 else
                     squad.releaseAgents(c.getSerials());
-			} else {
+            } else {
                 c.setMoneypennySerialNumber(-1);
                 complete(c, gadgetsAvailableFuture);
-			}
-//            System.out.println("moneytpenny finished AgentsAvailableEvent");
+            }
         });
 
-//        subscribeBroadcast(TickBroadcast.class, (c) -> {
-//            this.time = c.getTime();
-//            if(time == this.duration)
-//                this.terminate();
-//        });
+        subscribeBroadcast(TickBroadcast.class, (c) -> {
+            this.time = c.getTime();
+            if (time == this.duration)
+                this.terminate();
+        });
     }
 }

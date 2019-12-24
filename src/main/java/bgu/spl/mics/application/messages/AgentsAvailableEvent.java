@@ -20,10 +20,6 @@ public class AgentsAvailableEvent implements Event<Future> {
         return serials;
     }
 
-    public void setSerials(List<String> serials) {
-        this.serials = serials;
-    }
-
     public int getMoneypennySerialNumber() {
         return moneypennySerialNumber;
     }
@@ -34,10 +30,6 @@ public class AgentsAvailableEvent implements Event<Future> {
 
     public int getMissionDuration() {
         return missionDuration;
-    }
-
-    public void setMissionDuration(int missionDuration) {
-        this.missionDuration = missionDuration;
     }
 
     public List<String> getAgentsName() {
